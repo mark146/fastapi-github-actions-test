@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "fastapi-github-actions-test"
+version = "0.1.0"
+description = ""
+authors = ["Jin <you@example.com>"]
+readme = "README.md"
+packages = [{include = "fastapi_github_actions_test"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.100.0"
+uvicorn = "^0.23.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
