@@ -36,8 +36,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ${{ env.DOCKER_REPO }}:latest
-          context: ${{ env.DOCKER_REPO }}
+          tags: $DOCKER_REPO:latest
+          context: $DOCKER_REPO
 
 
   deploy:
