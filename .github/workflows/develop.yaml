@@ -7,10 +7,6 @@ on:
     branches: [ develop ]
 
 
-permissions:
-  contents: read
-
-
 env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -30,7 +26,7 @@ jobs:
         run: |
           docker login -u ${{ env.DOCKER_HUB_USERNAME }} -p ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
           docker build -t app .
-          docker tag app ${{ env.DOCKER_REPO }}
+          docker tag app ${{ env.DOCKER_REPO }}:latest
           docker push ${{ env.DOCKER_REPO }}
 
 
@@ -38,20 +34,11 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.AWS_HOST }}
-          username: ubuntu
+          username: ${{ env.AWS_USER }}
           key: ${{ env.AWS_SSH_KEY }}
           script: |
             cd git-action-test/
-            docker pull ${{ secrets.DOCKER_ID }}/cicd:latest
-            docker tag app ${{ secrets.DOCKER_ID }}/cicd:latest
-            docker stop app
-            docker rm app
-            docker rmi ${{ secrets.DOCKER_ID }}/cicd:latest
-            docker network create -d bridge test
+            docker pull ${{ env.DOCKER_REPO }}:latest
+            docker-compose down
+            docker-compose up -d
             
-            docker stop mysqlDB
-            docker rm mysqlDB
-            docker rmi mysqlDB
-            docker run -d --network test --network-alias mysql -v  /build/DB/mysql:/var/lib/mysql --name mysqlDB -e MYSQL_DATABASE=anonymous_board -e MYSQL_USER=user01 -e MYSQL_PASSWORD=user01 -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 mysql
-
-            docker run -d --rm --name app --network test -p 8080:8080 ${{ secrets.DOCKER_ID }}/cicd:latest
