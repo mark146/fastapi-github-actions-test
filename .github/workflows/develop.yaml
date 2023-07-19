@@ -26,31 +26,19 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
-      - name: Login to Docker
-        uses: docker/login-action@v1
-        with:
-          username: ${{ env.DOCKER_HUB_USERNAME }}
-          password: ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
-
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
+        run: |
+          docker login -u ${{ env.DOCKER_HUB_USERNAME }} -p ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
+          docker build -t app .
+          docker tag app ${{ env.DOCKER_REPO }}
+          docker push ${{ env.DOCKER_REPO }}
+
+
+      - name: EC2 Docker Deploy
+        uses: appleboy/ssh-action@master
         with:
-          push: true
-          tags: $DOCKER_REPO:latest
-          context: $DOCKER_REPO
-
-
-  deploy:
-     runs-on: ubuntu-latest
-     steps:
-       - name: Check out the repo
-         uses: actions/checkout@v3
-
-       - name: EC2 Docker Deploy
-         uses: appleboy/ssh-action@master
-         with:
           host: ${{ env.AWS_HOST }}
-          username: ${{ env.AWS_USER }}
+          username: ubuntu
           key: ${{ env.AWS_SSH_KEY }}
           script: |
             cd git-action-test/
