@@ -13,6 +13,7 @@ env:
   DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
   AWS_HOST: ${{ secrets.AWS_HOST }}
   AWS_SSH_KEY: ${{ secrets.AWS_SSH_KEY }}
+  AWS_USER: ${{ secrets.AWS_USER }}
 
 
 jobs:
@@ -41,4 +42,3 @@ jobs:
             docker pull ${{ env.DOCKER_REPO }}:latest
             docker-compose down
             docker-compose up -d
-            
