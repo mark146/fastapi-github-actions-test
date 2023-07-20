@@ -39,6 +39,6 @@ jobs:
           key: ${{ env.AWS_SSH_KEY }}
           script: |
             cd git-action-test/
-            echo "${{ env.DOCKER_COMPOSE_YML }}" > docker-compose.yml
+            echo "${{ env.DOCKER_COMPOSE_YML }}" > docker-compose.yaml
             docker-compose down
             docker-compose up -d
