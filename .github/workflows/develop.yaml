@@ -30,9 +30,6 @@ jobs:
           docker tag app ${{ env.DOCKER_REPO }}:latest
           docker push ${{ env.DOCKER_REPO }}
 
-      - name: Create docker-compose.yaml file
-        script: |
-
       - name: EC2 Docker Deploy
         uses: appleboy/ssh-action@master
         with:
