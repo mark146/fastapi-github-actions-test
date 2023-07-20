@@ -39,6 +39,7 @@ jobs:
           script: |
             pwd
             cd git-action-test/
+            ls -la
             docker pull ${{ env.DOCKER_REPO }}:latest
             docker-compose down
             docker-compose up -d
