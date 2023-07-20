@@ -1,7 +1,8 @@
 version: "3.9"
 services:
   server:
-    # images: user_id/image:latest
+    # image: docker_hub_container_repo:latest
+    # ex) image: user_id/image:latest
     build: .
     ports:
       - "9081:8000"
