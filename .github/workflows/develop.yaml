@@ -14,6 +14,7 @@ env:
   AWS_HOST: ${{ secrets.AWS_HOST }}
   AWS_SSH_KEY: ${{ secrets.AWS_SSH_KEY }}
   AWS_USER: ${{ secrets.AWS_USER }}
+  DOCKER_COMPOSE_YML: ${{ secrets.DOCKER_COMPOSE_YML }}
 
 
 jobs:
@@ -37,12 +38,7 @@ jobs:
           username: ${{ env.AWS_USER }}
           key: ${{ env.AWS_SSH_KEY }}
           script: |
-            pwd
             cd git-action-test/
-            docker pull ${{ env.DOCKER_REPO }}:latest
-            docker --version
-            docker ps
-            docker images
-            ls -lrta
+            echo "${{ env.DOCKER_COMPOSE_YML }}" > docker-compose.yml
             docker-compose down
             docker-compose up -d
