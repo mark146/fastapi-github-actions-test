@@ -14,7 +14,6 @@ env:
   AWS_HOST: ${{ secrets.AWS_HOST }}
   AWS_SSH_KEY: ${{ secrets.AWS_SSH_KEY }}
   AWS_USER: ${{ secrets.AWS_USER }}
-  DOCKER_COMPOSE_YML: ${{ secrets.DOCKER_COMPOSE_YML }}
 
 
 jobs:
@@ -31,6 +30,9 @@ jobs:
           docker tag app ${{ env.DOCKER_REPO }}:latest
           docker push ${{ env.DOCKER_REPO }}
 
+      - name: Create docker-compose.yaml file
+        script: |
+
       - name: EC2 Docker Deploy
         uses: appleboy/ssh-action@master
         with:
@@ -39,6 +41,15 @@ jobs:
           key: ${{ env.AWS_SSH_KEY }}
           script: |
             cd git-action-test/
-            echo "${{ env.DOCKER_COMPOSE_YML }}" > docker-compose.yaml
+            touch docker-compose.yaml &&
+            echo '
+            version: "3.9"
+            services:
+              server:
+                image: ${{ env.DOCKER_REPO }}:latest
+                ports:
+                  - "9081:8000"
+                restart: always
+            ' >> docker-compose.yaml
             docker-compose down
             docker-compose up -d
