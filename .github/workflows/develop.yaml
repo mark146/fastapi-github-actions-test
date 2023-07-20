@@ -17,7 +17,7 @@ env:
 
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -32,6 +32,13 @@ jobs:
           docker build -t ${{ env.DOCKER_REPO }}:latest .
           docker push ${{ env.DOCKER_REPO }}:latest
 
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
       - name: EC2 Docker Deploy
         uses: appleboy/ssh-action@master
         with:
@@ -40,15 +47,7 @@ jobs:
           key: ${{ env.AWS_SSH_KEY }}
           script: |
             cd git-action-test/
-            echo '
-            version: "3.9"
-            services:
-              server:
-                image: ${{ env.DOCKER_REPO }}:latest
-                ports:
-                  - "9081:8000"
-                restart: always
-            ' >> docker-compose.yaml
+            sed -i 's|image:.*|image: '"${{ env.DOCKER_REPO }}:latest"'|' docker-compose.yaml
             docker-compose down
             docker-compose pull
             docker-compose up -d
