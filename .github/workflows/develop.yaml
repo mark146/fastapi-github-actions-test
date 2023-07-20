@@ -50,4 +50,5 @@ jobs:
                 restart: always
             ' >> docker-compose.yaml
             docker-compose down
+            docker-compose pull
             docker-compose up -d
