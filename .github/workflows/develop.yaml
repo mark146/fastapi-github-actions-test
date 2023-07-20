@@ -30,7 +30,6 @@ jobs:
           docker tag app ${{ env.DOCKER_REPO }}:latest
           docker push ${{ env.DOCKER_REPO }}
 
-
       - name: EC2 Docker Deploy
         uses: appleboy/ssh-action@master
         with:
@@ -38,6 +37,7 @@ jobs:
           username: ${{ env.AWS_USER }}
           key: ${{ env.AWS_SSH_KEY }}
           script: |
+            pwd
             cd git-action-test/
             docker pull ${{ env.DOCKER_REPO }}:latest
             docker-compose down
